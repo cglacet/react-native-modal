@@ -52,6 +52,7 @@ type State = {
 
 export interface ModalProps extends ViewProps {
   children: React.ReactNode;
+  onStartShouldSetPanResponder?: (e: any) => boolean | void;
   onSwipeStart?: () => void;
   onSwipeMove?: (percentageShown: number) => void;
   onSwipeComplete?: (params: OnSwipeCompleteParams) => void;
@@ -123,6 +124,7 @@ export class ReactNativeModal extends React.Component<ModalProps, State> {
     isVisible: PropTypes.bool.isRequired,
     hideModalContentWhileAnimating: PropTypes.bool,
     propagateSwipe: PropTypes.bool,
+    onStartShouldSetPanResponder: PropTypes.func,
     onModalShow: PropTypes.func,
     onModalWillShow: PropTypes.func,
     onModalHide: PropTypes.func,
@@ -174,6 +176,7 @@ export class ReactNativeModal extends React.Component<ModalProps, State> {
     hideModalContentWhileAnimating: false,
     propagateSwipe: false,
     isVisible: false,
+    onStartShouldSetPanResponder: () => null,
     onModalShow: () => null,
     onModalWillShow: () => null,
     onModalHide: () => null,
@@ -332,6 +335,10 @@ export class ReactNativeModal extends React.Component<ModalProps, State> {
             /scrollview|flatlist/i.test(instance.type),
           );
 
+        if (this.props.onStartShouldSetPanResponder?.(e) == false){
+          return false;
+        }
+        
         if (
           hasScrollableView &&
           this.props.propagateSwipe &&
